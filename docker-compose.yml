@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # 1. Database MySQL
+  mysql-db:
+    image: mysql:8.0
+    container_name: game-mysql
+    environment:
+      MYSQL_DATABASE: game_doan_so
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # 2. Redis Cache
+  redis-cache:
+    image: redis:7-alpine
+    container_name: game-redis
+    ports:
+      - "6379:6379"
+
+  # 3. Backend Spring Boot
+  backend:
+    build:
+      context: ./guess-game
+    container_name: game-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+      - redis-cache
+    environment:
+      # Spring Boot sẽ tự động trỏ vào database game_doan_so trong container game-mysql
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/game_doan_so?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      # Key đúng cho Spring Boot Data Redis
+      - SPRING_DATA_REDIS_HOST=game-redis
+      - SPRING_DATA_REDIS_PORT=6379
+
+  # 4. Frontend Vue
+  frontend:
+    build:
+      context: ./guess-game-ui
+    container_name: game-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

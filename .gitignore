@@ -1,0 +1,25 @@
+# ===== BACKEND (Spring Boot / Maven) =====
+guess-game/target/
+guess-game/.mvn/
+guess-game/*.iml
+guess-game/.idea/
+
+# ===== FRONTEND (Node / Vue) =====
+guess-game-ui/node_modules/
+guess-game-ui/dist/
+
+# ===== IDE =====
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== ENV / SECRETS =====
+.env
+.env.local
+*.env
