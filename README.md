@@ -170,6 +170,30 @@ Frontend chạy tại: http://localhost:5173
 
 ---
 
+## 💳 Thanh Toán VNPAY (Môi Trường Sandbox)
+
+> [!NOTE]
+> Dự án tích hợp **VNPAY Sandbox** (môi trường thử nghiệm) — **không trừ tiền thật**.  
+> Khi được chuyển hướng sang trang thanh toán VNPAY, dùng thông tin thẻ test sau:
+
+| Trường | Giá trị |
+|--------|---------|
+| **Ngân hàng** | NCB |
+| **Số thẻ** | `9704198526191432198` |
+| **Tên chủ thẻ** | `NGUYEN VAN A` |
+| **Ngày phát hành** | `07/15` |
+| **Mật khẩu OTP** | `123456` |
+
+**Các bước thanh toán:**
+1. Nhấn nút **"Mua thêm 5 lượt (VNPAY)"** tại trang Game
+2. Trình duyệt chuyển sang trang VNPAY Sandbox
+3. Chọn phương thức **"Thẻ ATM / Tài khoản ngân hàng"**
+4. Nhập thông tin thẻ test ở bảng trên
+5. Nhập OTP: `123456`
+6. Thanh toán thành công → tự động được cộng **5 lượt chơi**
+
+---
+
 ## 🔐 Bảo Mật
 
 - Mật khẩu băm bằng **BCrypt**
