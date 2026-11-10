@@ -12,6 +12,13 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    # Healthcheck: Chờ MySQL thực sự sẵn sàng nhận kết nối
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s    # Kiểm tra mỗi 10 giây
+      timeout: 5s      # Timeout mỗi lần check
+      retries: 5       # Thử lại tối đa 5 lần trước khi báo unhealthy
+      start_period: 30s  # Cho MySQL 30s để khởi động trước khi bắt đầu check
 
   # 2. Redis Cache
   redis-cache:
@@ -19,6 +26,13 @@ services:
     container_name: game-redis
     ports:
       - "6379:6379"
+    # Healthcheck: Chờ Redis thực sự sẵn sàng
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   # 3. Backend Spring Boot
   backend:
@@ -27,15 +41,16 @@ services:
     container_name: game-backend
     ports:
       - "8080:8080"
+    # Chờ MySQL và Redis HEALTHY rồi mới khởi động backend
     depends_on:
-      - mysql-db
-      - redis-cache
+      mysql-db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
     environment:
-      # Spring Boot sẽ tự động trỏ vào database game_doan_so trong container game-mysql
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/game_doan_so?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-      # Key đúng cho Spring Boot Data Redis
       - SPRING_DATA_REDIS_HOST=game-redis
       - SPRING_DATA_REDIS_PORT=6379
 
